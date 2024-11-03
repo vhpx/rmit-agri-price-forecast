@@ -1,22 +1,18 @@
-Rice Price Forecasting Project
-=============================
+# Rice Price Forecasting Project
 
-Overview
---------
+## Overview
 This project implements multiple forecasting approaches to predict Vietnamese rice prices using both statistical and machine learning models. It combines macro-economic indicators, news sentiment data, and historical price data to generate forecasts.
 
-Data Sources
------------
+## Data Sources
 - target_rice_data.xlsx: Vietnamese 5% broken rice prices (monthly)
-- macro_data.xlsx: Macro-economic indicators from Vietnam
+- macro_data.xlsx: Macro-economic indicators from Vietnam  
 - news_data_loaded.xlsx: News sentiment data
 - Time period: 2009-2024
 
-Models Implemented
------------------
+## Models Implemented
 1. Statistical Models (statsforecast.ipynb):
    - AutoARIMA
-   - AutoETS
+   - AutoETS 
    - AutoTheta
    - AutoCES
    
@@ -26,8 +22,7 @@ Models Implemented
    - LightGBM
    - CatBoost
 
-Key Features
------------
+## Key Features
 - Data preprocessing and cleaning
 - Feature engineering including sentiment analysis
 - Cross-validation with rolling windows
@@ -37,8 +32,7 @@ Key Features
   * Turning Point Accuracy
   * Weighted Combined Score
 
-Project Structure
-----------------
+## Project Structure
 preprocessing.ipynb
 - Data loading and cleaning
 - Feature engineering
@@ -56,8 +50,7 @@ statsforecast.ipynb
 - Cross-validation
 - Results comparison
 
-Requirements
------------
+## Requirements
 Python 3.10+
 Key packages:
 - pandas
@@ -71,14 +64,12 @@ Key packages:
 - lightgbm
 - catboost
 
-Usage
------
+## Usage
 1. Run preprocessing.ipynb first to prepare the data
 2. Run either statsforecast.ipynb or mlforecast.ipynb for predictions
 3. Results include performance metrics and visualizations
 
 Note: The project uses parallel processing through Ray for efficient computation of statistical models.
 
-License
--------
+## License
 This project is for research purposes only. Please ensure you have the necessary rights to use the data sources mentioned above.
