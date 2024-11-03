@@ -24,8 +24,10 @@ This project implements multiple forecasting approaches to predict Vietnamese ri
 
 ## Key Features
 - Data preprocessing and cleaning
-- Feature engineering including sentiment analysis
-- Cross-validation with rolling windows
+- Automatic TS feature engineering & LLM-powered sentiment analysis 
+- Cross-validation with rolling windows for most robustness checks
+- Ray-powered parallel processing for efficient statistical model training
+- Efficient automated ML & DL forecasting pipeline
 - Multiple evaluation metrics:
   * RMSE (Root Mean Square Error)
   * Directional Accuracy
