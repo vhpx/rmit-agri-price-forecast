@@ -1,32 +1,10 @@
-# Core Data Science
+python-dotenv
 pandas
 numpy
 scikit-learn
-
-# Visualization
-matplotlib
-
-# Time Series Forecasting
-statsforecast
+optuna
 mlforecast
 coreforecast
-utilsforecast
-datasetsforecast
-
-# Machine Learning Models
-xgboost
-lightgbm
-catboost
-
-# Optimization & Hyperparameter Tuning
-optuna
-
-# Parallel Processing
+matplotlib
+statsforecast
 ray
-
-# Jupyter Environment
-jupyter
-ipykernel
-
-# Optional Dependencies
-python-dotenv  # For environment variables
