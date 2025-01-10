@@ -59,6 +59,7 @@ class StatisticalExperiment:
             AutoTheta(season_length=season_length),
             AutoCES(season_length=season_length)
         ]
+        # Use 'M' frequency to match the data
         return StatsForecast(models=models, freq='M', n_jobs=-1)
 
     def prepare_data(self, df, use_scaler=False):
@@ -66,6 +67,12 @@ class StatisticalExperiment:
         from sklearn.preprocessing import MinMaxScaler
         
         df = df.copy()
+        
+        # Convert to datetime without changing the date
+        df['ds'] = pd.to_datetime(df['ds'])
+        last_date = df['ds'].max()
+        print(f"Last date in statistical pipeline: {last_date}")  # Add this for debugging
+        
         df['y'] = pd.to_numeric(df['y'], errors='coerce')
         df['y'] = df['y'].fillna(method='ffill').fillna(method='bfill')
         
@@ -89,6 +96,23 @@ class StatisticalExperiment:
         # Fit models and generate forecasts with prediction intervals
         stats_forecaster.fit(forecast_df)
         predictions = stats_forecaster.predict(h=forecast_horizon, level=[90])
+        
+        # Post-process the predictions to align dates
+        last_date = pd.to_datetime(df['ds'].max())
+        next_month_start = last_date + pd.offsets.MonthBegin(1)
+        
+        # Create new date range starting from next month
+        future_dates = pd.date_range(
+            start=next_month_start,
+            periods=forecast_horizon,
+            freq='MS'
+        )
+        
+        # Update the predictions DataFrame with correct dates
+        predictions['ds'] = future_dates
+        
+        # Sort the predictions by date
+        predictions = predictions.sort_values('ds').reset_index(drop=True)
         
         return predictions
 

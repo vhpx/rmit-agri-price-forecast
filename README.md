@@ -1,77 +1,202 @@
-# Rice Price Forecasting Project
+# Rice Price Forecasting API
 
-## Overview
-This project implements multiple forecasting approaches to predict Vietnamese rice prices using both statistical and machine learning models. It combines macro-economic indicators, news sentiment data, and historical price data to generate forecasts.
+This API provides endpoints for rice price forecasting using both statistical and machine learning approaches.
 
-## Data Sources
-- target_rice_data.xlsx: Vietnamese 5% broken rice prices (monthly)
-- macro_data.xlsx: Macro-economic indicators from Vietnam  
-- news_data_loaded.xlsx: News sentiment data
-- Time period: 2009-2024
+## Local Development Setup
 
-## Models Implemented
-1. Statistical Models (statsforecast.ipynb):
-   - AutoARIMA
-   - AutoETS 
-   - AutoTheta
-   - AutoCES
-   
-2. Machine Learning Models (mlforecast.ipynb):
-   - ElasticNet
-   - XGBoost
-   - LightGBM
-   - CatBoost
+1. Install dependencies:
+```bash
+pip install -r requirements.txt
+```
 
-## Key Features
-- Data preprocessing and cleaning
-- Automatic TS feature engineering & LLM-powered sentiment analysis 
-- Cross-validation with rolling windows for most robustness checks
-- Ray-powered parallel processing for efficient statistical model training
-- Efficient automated ML & DL forecasting pipeline
-- Multiple evaluation metrics:
-  * RMSE (Root Mean Square Error)
-  * Directional Accuracy
-  * Turning Point Accuracy
-  * Weighted Combined Score
+2. Start the development server:
+```bash
+uvicorn app:app --reload
+```
 
-## Project Structure
-preprocessing.ipynb
-- Data loading and cleaning
-- Feature engineering
-- Data merging and preparation
+The API will be available at `http://localhost:8000`
 
-mlforecast.ipynb
-- Machine learning model implementation
-- Model training and evaluation
-- Cross-validation
-- Results visualization
+## API Endpoints
 
-statsforecast.ipynb
-- Statistical model implementation
-- Model training and evaluation
-- Cross-validation
-- Results comparison
+### 1. Get Forecast
 
-## Requirements
-Python 3.10+
-Key packages:
-- pandas
-- numpy
-- scikit-learn
-- statsforecast
-- mlforecast
-- ray
-- matplotlib
-- xgboost
-- lightgbm
-- catboost
+Get both statistical and machine learning forecasts for rice prices.
 
-## Usage
-1. Run preprocessing.ipynb first to prepare the data
-2. Run either statsforecast.ipynb or mlforecast.ipynb for predictions
-3. Results include performance metrics and visualizations
+```
+GET /forecast
+```
 
-Note: The project uses parallel processing through Ray for efficient computation of statistical models.
+**Query Parameters:**
+- `h` (integer, optional): Forecast horizon in months. Default: 12
 
-## License
-This project is for research purposes only. Please ensure you have the necessary rights to use the data sources mentioned above.
+**Response:**
+```json
+{
+    "statistical_forecast": {
+        "ds": {
+            "0": "2025-01-01",
+            "1": "2025-02-01",
+            ...
+        },
+        "AutoARIMA": {
+            "0": 503.089,
+            "1": 511.703,
+            ...
+        },
+        "AutoARIMA-lo-90": {
+            "0": 470.479,
+            "1": 466.625,
+            ...
+        },
+        "AutoARIMA-hi-90": {
+            "0": 535.698,
+            "1": 556.781,
+            ...
+        },
+        "AutoETS": {...},
+        "AutoETS-lo-90": {...},
+        "AutoETS-hi-90": {...},
+        "AutoTheta": {...},
+        "AutoTheta-lo-90": {...},
+        "AutoTheta-hi-90": {...},
+        "CES": {...},
+        "CES-lo-90": {...},
+        "CES-hi-90": {...}
+    },
+    "ml_forecast": {
+        "unique_id": {
+            "0": "stats",
+            "1": "stats",
+            ...
+        },
+        "ds": {
+            "0": "2025-01-01",
+            "1": "2025-02-01",
+            ...
+        },
+        "elasticnet": {
+            "0": 484.423,
+            "1": 475.038,
+            ...
+        },
+        "lightgbm": {...},
+        "xgboost": {...},
+        "catboost": {...}
+    }
+}
+```
+
+The forecast response includes:
+- Statistical models (AutoARIMA, AutoETS, AutoTheta, CES) with their 90% confidence intervals (lo-90, hi-90)
+- Machine learning models (ElasticNet, LightGBM, XGBoost, CatBoost) predictions
+
+### 2. Get Statistical Metrics
+
+Get performance metrics for statistical forecasting models.
+
+```
+GET /statistical_metrics
+```
+
+**Query Parameters:**
+- `h` (integer, optional): Forecast horizon in months. Default: 12
+
+**Response:**
+```json
+{
+    "no_scaling": {
+        "Model": {
+            "0": "AutoARIMA",
+            "1": "AutoETS",
+            "2": "AutoTheta",
+            "3": "CES"
+        },
+        "RMSE": {
+            "0": 83.459,
+            "1": 79.528,
+            "2": 76.848,
+            "3": 81.624
+        },
+        "Directional_Accuracy": {
+            "0": 0.457,
+            "1": 0.498,
+            "2": 0.635,
+            "3": 0.475
+        },
+        "Turning_Point_Accuracy": {
+            "0": 0.639,
+            "1": 0.688,
+            "2": 0.604,
+            "3": 0.576
+        },
+        "Weighted_Score": {
+            "0": 28.120,
+            "1": 26.780,
+            "2": 25.869,
+            "3": 27.524
+        }
+    },
+    "with_scaling": {
+        // Same structure as no_scaling
+    }
+}
+```
+
+The statistical metrics include:
+- RMSE (Root Mean Square Error)
+- Directional Accuracy (0-1, higher is better)
+- Turning Point Accuracy (0-1, higher is better)
+- Weighted Score (composite metric)
+
+### 3. Get Machine Learning Metrics
+
+Get performance metrics for machine learning forecasting models.
+
+```
+GET /ml_metrics
+```
+
+**Query Parameters:**
+- `h` (integer, optional): Forecast horizon in months. Default: 12
+
+**Response:**
+```json
+{
+    "elasticnet": {
+        "RMSE": 84.181,
+        "Directional_Accuracy": 0.600,
+        "Turning_Point_Accuracy": 0.562,
+        "Weighted_Score": 28.339
+    },
+    "lightgbm": {
+        "RMSE": 85.063,
+        "Directional_Accuracy": 0.508,
+        "Turning_Point_Accuracy": 0.607,
+        "Weighted_Score": 28.649
+    },
+    "xgboost": {
+        "RMSE": 80.738,
+        "Directional_Accuracy": 0.559,
+        "Turning_Point_Accuracy": 0.576,
+        "Weighted_Score": 27.200
+    },
+    "catboost": {
+        "RMSE": 74.421,
+        "Directional_Accuracy": 0.635,
+        "Turning_Point_Accuracy": 0.611,
+        "Weighted_Score": 25.057
+    }
+}
+```
+
+The ML metrics include for each model:
+- RMSE (Root Mean Square Error)
+- Directional Accuracy (0-1, higher is better)
+- Turning Point Accuracy (0-1, higher is better)
+- Weighted Score (composite metric)
+
+## API Documentation
+
+For interactive API documentation, visit:
+- Swagger UI: `http://localhost:8000/docs`
+- ReDoc: `http://localhost:8000/redoc`

@@ -23,6 +23,12 @@ def run_forecasting_pipeline(stats_df, horizon=12, step_size=1, n_windows=36):
     """Run an automated machine learning forecasting pipeline with multiple models."""
     # Basic preprocessing
     processed_df = stats_df.copy()
+    
+    # Ensure dates are properly formatted for MLForecast
+    processed_df['ds'] = pd.to_datetime(processed_df['ds'])
+    last_date = processed_df['ds'].max()
+    print(f"Last date in data: {last_date}")  # Add this for debugging
+    
     processed_df.fillna(0)
 
     # Initialize base models with default parameters
