@@ -32,56 +32,41 @@ GET /forecast
 **Response:**
 ```json
 {
-    "statistical_forecast": {
-        "ds": {
-            "0": "2025-01-01",
-            "1": "2025-02-01",
+    "statistical_forecast": [
+        {
+            "date": "2025-01-01",
+            "AutoARIMA": 503.089,
+            "AutoARIMA-lo-90": 470.479,
+            "AutoARIMA-hi-90": 535.698,
+            "AutoETS": 496.524,
+            "AutoETS-lo-90": 449.446,
+            "AutoETS-hi-90": 543.602,
+            "AutoTheta": 492.367,
+            "AutoTheta-lo-90": 462.533,
+            "AutoTheta-hi-90": 529.997,
+            "CES": 494.386,
+            "CES-lo-90": 447.228,
+            "CES-hi-90": 543.096
         },
-        "AutoARIMA": {
-            "0": 503.089,
-            "1": 511.703,
-            ...
+        {
+            "date": "2025-02-01",
+            "AutoARIMA": 511.703,
+            // ... other model values
+        }
+    ],
+    "ml_forecast": [
+        {
+            "date": "2025-01-01",
+            "elasticnet": 484.423,
+            "lightgbm": 484.711,
+            "xgboost": 485.342,
+            "catboost": 494.618
         },
-        "AutoARIMA-lo-90": {
-            "0": 470.479,
-            "1": 466.625,
-            ...
-        },
-        "AutoARIMA-hi-90": {
-            "0": 535.698,
-            "1": 556.781,
-            ...
-        },
-        "AutoETS": {...},
-        "AutoETS-lo-90": {...},
-        "AutoETS-hi-90": {...},
-        "AutoTheta": {...},
-        "AutoTheta-lo-90": {...},
-        "AutoTheta-hi-90": {...},
-        "CES": {...},
-        "CES-lo-90": {...},
-        "CES-hi-90": {...}
-    },
-    "ml_forecast": {
-        "unique_id": {
-            "0": "stats",
-            "1": "stats",
-            ...
-        },
-        "ds": {
-            "0": "2025-01-01",
-            "1": "2025-02-01",
-            ...
-        },
-        "elasticnet": {
-            "0": 484.423,
-            "1": 475.038,
-            ...
-        },
-        "lightgbm": {...},
-        "xgboost": {...},
-        "catboost": {...}
-    }
+        {
+            "date": "2025-02-01",
+            // ... predictions for other dates
+        }
+    ]
 }
 ```
 
@@ -103,41 +88,25 @@ GET /statistical_metrics
 **Response:**
 ```json
 {
-    "no_scaling": {
-        "Model": {
-            "0": "AutoARIMA",
-            "1": "AutoETS",
-            "2": "AutoTheta",
-            "3": "CES"
+    "no_scaling": [
+        {
+            "Model": "AutoARIMA",
+            "RMSE": 83.459,
+            "Directional_Accuracy": 0.457,
+            "Turning_Point_Accuracy": 0.639,
+            "Weighted_Score": 28.120
         },
-        "RMSE": {
-            "0": 83.459,
-            "1": 79.528,
-            "2": 76.848,
-            "3": 81.624
-        },
-        "Directional_Accuracy": {
-            "0": 0.457,
-            "1": 0.498,
-            "2": 0.635,
-            "3": 0.475
-        },
-        "Turning_Point_Accuracy": {
-            "0": 0.639,
-            "1": 0.688,
-            "2": 0.604,
-            "3": 0.576
-        },
-        "Weighted_Score": {
-            "0": 28.120,
-            "1": 26.780,
-            "2": 25.869,
-            "3": 27.524
+        {
+            "Model": "AutoETS",
+            "RMSE": 79.528,
+            "Directional_Accuracy": 0.498,
+            "Turning_Point_Accuracy": 0.688,
+            "Weighted_Score": 26.780
         }
-    },
-    "with_scaling": {
+    ],
+    "with_scaling": [
         // Same structure as no_scaling
-    }
+    ]
 }
 ```
 

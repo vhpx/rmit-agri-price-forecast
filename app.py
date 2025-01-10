@@ -21,6 +21,32 @@ def prepare_data(price_df):
     stats_df['y'] = stats_df['y'].fillna(method='ffill').fillna(method='bfill')
     return stats_df
 
+def format_forecast_response(df):
+    """Convert forecast DataFrame to a clean list structure."""
+    dates = df['ds'].astype(str).tolist()
+    forecasts = []
+    
+    for date_idx, date in enumerate(dates):
+        forecast = {"date": date}
+        for col in df.columns:
+            if col != 'ds' and col != 'unique_id':
+                forecast[col] = float(df[col].iloc[date_idx])
+        forecasts.append(forecast)
+    
+    return forecasts
+
+def format_metrics_response(df):
+    """Convert metrics DataFrame to a clean dictionary structure."""
+    metrics = []
+    for idx in range(len(df)):
+        metric = {}
+        for col in df.columns:
+            metric[col] = df[col].iloc[idx]
+            if isinstance(metric[col], (float, int)):
+                metric[col] = float(metric[col])
+        metrics.append(metric)
+    return metrics
+
 @app.get("/forecast")
 def forecast(h: int = Query(12, description="Forecast horizon")):
     """
@@ -47,14 +73,10 @@ def forecast(h: int = Query(12, description="Forecast horizon")):
         n_windows=36
     )
 
-    # Convert Timestamps to string for JSON serialization
-    statistical_results['forecasts']['ds'] = statistical_results['forecasts']['ds'].astype(str)
-    ml_results['future_predictions']['ds'] = ml_results['future_predictions']['ds'].astype(str)
-
     return JSONResponse(
         content={
-            "statistical_forecast": statistical_results['forecasts'].to_dict(),
-            "ml_forecast": ml_results['future_predictions'].to_dict()
+            "statistical_forecast": format_forecast_response(statistical_results['forecasts']),
+            "ml_forecast": format_forecast_response(ml_results['future_predictions'])
         }
     )
 
@@ -80,8 +102,8 @@ def get_statistical_metrics(h: int = Query(12, description="Forecast horizon")):
 
     return JSONResponse(
         content={
-            "no_scaling": statistical_results['no_scaling']['results'].to_dict(),
-            "with_scaling": statistical_results['with_scaling']['results'].to_dict()
+            "no_scaling": format_metrics_response(statistical_results['no_scaling']['results']),
+            "with_scaling": format_metrics_response(statistical_results['with_scaling']['results'])
         }
     )
 
@@ -104,5 +126,12 @@ def get_ml_metrics(h: int = Query(12, description="Forecast horizon")):
         step_size=1,
         n_windows=36
     )
+    
+    # Convert metrics to a clean dictionary format
+    metrics = {}
+    for model, model_metrics in ml_results['metrics'].items():
+        metrics[model] = {
+            metric: float(value) for metric, value in model_metrics.items()
+        }
 
-    return JSONResponse(content=ml_results['metrics'].to_dict()) 
+    return JSONResponse(content=metrics) 
