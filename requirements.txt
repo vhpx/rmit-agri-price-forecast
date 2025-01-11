@@ -10,3 +10,4 @@ statsforecast
 ray
 uvicorn
 fastapi
+lightgbm
