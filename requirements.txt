@@ -11,3 +11,5 @@ ray
 uvicorn
 fastapi
 lightgbm
+xgboost
+catboost
