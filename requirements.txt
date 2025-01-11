@@ -8,3 +8,5 @@ coreforecast
 matplotlib
 statsforecast
 ray
+uvicorn
+fastapi
