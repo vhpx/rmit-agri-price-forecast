@@ -8,8 +8,9 @@ coreforecast
 matplotlib
 statsforecast
 ray
-uvicorn
-fastapi
 lightgbm
 xgboost
 catboost
+fastapi
+uvicorn
+utilsforecast

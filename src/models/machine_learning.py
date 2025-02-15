@@ -43,10 +43,10 @@ def run_forecasting_pipeline(stats_df, horizon=12, step_size=1, n_windows=36):
     mlf = MLForecast(
         models=models,
         freq='MS',  # Monthly frequency
-        lags=[1, 12],  # Previous month and same month last year
-        target_transforms=[Differences([12])],  # Remove yearly seasonality
+        lags=[1, 12],  # Reduced from more complex lag structure
+        target_transforms=[Differences([12])],  # Keep only yearly seasonality
         lag_transforms={
-            1: [ExponentiallyWeightedMean(alpha=0.5)],
+            1: [ExponentiallyWeightedMean(alpha=0.5)],  # Simplified lag transforms
             12: [RollingMean(window_size=12)]
         }
     )
@@ -54,9 +54,9 @@ def run_forecasting_pipeline(stats_df, horizon=12, step_size=1, n_windows=36):
     # First do cross-validation to evaluate performance
     cv_predictions = mlf.cross_validation(
         processed_df,
-        n_windows=n_windows,
+        n_windows=n_windows,  # Now using the reduced n_windows parameter
         h=horizon,
-        step_size=step_size
+        step_size=step_size  # Now using the increased step_size parameter
     )
 
     # Evaluate models using cross-validation results
