@@ -11,6 +11,11 @@ import pandas as pd
 
 app = FastAPI()
 
+@app.get("/health")
+def health_check():
+    """Health check endpoint to verify API is running."""
+    return {"status": "healthy", "message": "API is running"}
+
 def prepare_data(price_df):
     """Prepare data for forecasting (mimics the function in main.py)."""
     stats_df = price_df.copy()
@@ -63,14 +68,14 @@ def forecast(h: int = Query(12, description="Forecast horizon")):
     statistical_results = run_statistical_pipeline(
         stats_df,
         forecast_horizon=h,
-        step_size=1,
-        n_windows=36
+        step_size=3,
+        n_windows=12
     )
     ml_results = run_forecasting_pipeline(
         stats_df,
         horizon=h,
-        step_size=1,
-        n_windows=36
+        step_size=3,
+        n_windows=12
     )
 
     return JSONResponse(
@@ -96,8 +101,8 @@ def get_statistical_metrics(h: int = Query(12, description="Forecast horizon")):
     statistical_results = run_statistical_pipeline(
         stats_df,
         forecast_horizon=h,
-        step_size=1,
-        n_windows=36
+        step_size=3,
+        n_windows=12
     )
 
     return JSONResponse(
@@ -123,8 +128,8 @@ def get_ml_metrics(h: int = Query(12, description="Forecast horizon")):
     ml_results = run_forecasting_pipeline(
         stats_df,
         horizon=h,
-        step_size=1,
-        n_windows=36
+        step_size=3,
+        n_windows=12
     )
     
     # Convert metrics to a clean dictionary format

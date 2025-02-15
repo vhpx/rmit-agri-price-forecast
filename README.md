@@ -1,170 +1,186 @@
-# Rice Price Forecasting API
+# Rice Price Forecast API Documentation
 
-This API provides endpoints for rice price forecasting using both statistical and machine learning approaches.
+This API provides endpoints for forecasting Vietnamese rice prices using both statistical and machine learning models. The API is deployed on Modal and provides predictions and performance metrics for various forecasting models.
 
-## Local Development Setup
-
-1. Install dependencies:
-```bash
-pip install -r requirements.txt
+## Base URL
+```
+https://hajiwansau15--agri-price-forecast-api-fastapi-app.modal.run
 ```
 
-2. Start the development server:
-```bash
-uvicorn app:app --reload
+## Endpoints
+
+### 1. Health Check
+Check if the API is running properly.
+
+**Endpoint:** `/health`  
+**Method:** GET  
+**Response Time:** ~1 second
+
+**Response Format:**
+```json
+{
+    "status": "healthy",
+    "message": "API is running"
+}
 ```
 
-The API will be available at `http://localhost:8000`
+### 2. Forecast
+Get price forecasts using both statistical and machine learning models.
 
-## API Endpoints
+**Endpoint:** `/forecast`  
+**Method:** GET  
+**Parameters:**
+- `h` (optional): Forecast horizon in months (default: 12)
+**Response Time:** ~5-6 minutes
 
-### 1. Get Forecast
-
-Get both statistical and machine learning forecasts for rice prices.
-
+**Example Request:**
 ```
-GET /forecast
+/forecast?h=24
 ```
 
-**Query Parameters:**
-- `h` (integer, optional): Forecast horizon in months. Default: 12
-
-**Response:**
+**Response Format:**
 ```json
 {
     "statistical_forecast": [
         {
             "date": "2025-01-01",
-            "AutoARIMA": 503.089,
-            "AutoARIMA-lo-90": 470.479,
-            "AutoARIMA-hi-90": 535.698,
-            "AutoETS": 496.524,
-            "AutoETS-lo-90": 449.446,
-            "AutoETS-hi-90": 543.602,
-            "AutoTheta": 492.367,
-            "AutoTheta-lo-90": 462.533,
-            "AutoTheta-hi-90": 529.997,
-            "CES": 494.386,
-            "CES-lo-90": 447.228,
-            "CES-hi-90": 543.096
+            "AutoARIMA": 500.06,
+            "AutoARIMA-lo-90": 467.63,
+            "AutoARIMA-hi-90": 532.49,
+            "AutoETS": 496.52,
+            "AutoETS-lo-90": 449.44,
+            "AutoETS-hi-90": 543.60,
+            "AutoTheta": 492.36,
+            "AutoTheta-lo-90": 462.53,
+            "AutoTheta-hi-90": 529.99,
+            "CES": 494.38,
+            "CES-lo-90": 447.22,
+            "CES-hi-90": 543.09
         },
-        {
-            "date": "2025-02-01",
-            "AutoARIMA": 511.703,
-            // ... other model values
-        }
+        // ... additional dates
     ],
     "ml_forecast": [
         {
             "date": "2025-01-01",
-            "elasticnet": 484.423,
-            "lightgbm": 484.711,
-            "xgboost": 485.342,
-            "catboost": 494.618
+            "elasticnet": 484.42,
+            "lightgbm": 484.71,
+            "xgboost": 485.34,
+            "catboost": 494.61
         },
-        {
-            "date": "2025-02-01",
-            // ... predictions for other dates
-        }
+        // ... additional dates
     ]
 }
 ```
 
-The forecast response includes:
-- Statistical models (AutoARIMA, AutoETS, AutoTheta, CES) with their 90% confidence intervals (lo-90, hi-90)
-- Machine learning models (ElasticNet, LightGBM, XGBoost, CatBoost) predictions
+### 3. Statistical Metrics
+Get performance metrics for statistical models.
 
-### 2. Get Statistical Metrics
+**Endpoint:** `/statistical_metrics`  
+**Method:** GET  
+**Parameters:**
+- `h` (optional): Forecast horizon in months (default: 12)
+**Response Time:** ~4-5 minutes
 
-Get performance metrics for statistical forecasting models.
-
+**Example Request:**
 ```
-GET /statistical_metrics
+/statistical_metrics?h=24
 ```
 
-**Query Parameters:**
-- `h` (integer, optional): Forecast horizon in months. Default: 12
-
-**Response:**
+**Response Format:**
 ```json
 {
     "no_scaling": [
         {
-            "Model": "AutoARIMA",
-            "RMSE": 83.459,
-            "Directional_Accuracy": 0.457,
-            "Turning_Point_Accuracy": 0.639,
-            "Weighted_Score": 28.120
+            "model": "AutoARIMA",
+            "mape": 12.34,
+            "rmse": 56.78,
+            // ... additional metrics
         },
-        {
-            "Model": "AutoETS",
-            "RMSE": 79.528,
-            "Directional_Accuracy": 0.498,
-            "Turning_Point_Accuracy": 0.688,
-            "Weighted_Score": 26.780
-        }
+        // ... other models
     ],
     "with_scaling": [
-        // Same structure as no_scaling
+        {
+            "model": "AutoARIMA",
+            "mape": 11.22,
+            "rmse": 44.55,
+            // ... additional metrics
+        },
+        // ... other models
     ]
 }
 ```
 
-The statistical metrics include:
-- RMSE (Root Mean Square Error)
-- Directional Accuracy (0-1, higher is better)
-- Turning Point Accuracy (0-1, higher is better)
-- Weighted Score (composite metric)
+### 4. ML Metrics
+Get performance metrics for machine learning models.
 
-### 3. Get Machine Learning Metrics
+**Endpoint:** `/ml_metrics`  
+**Method:** GET  
+**Parameters:**
+- `h` (optional): Forecast horizon in months (default: 12)
+**Response Time:** ~4-5 minutes
 
-Get performance metrics for machine learning forecasting models.
-
+**Example Request:**
 ```
-GET /ml_metrics
+/ml_metrics?h=24
 ```
 
-**Query Parameters:**
-- `h` (integer, optional): Forecast horizon in months. Default: 12
-
-**Response:**
+**Response Format:**
 ```json
 {
     "elasticnet": {
-        "RMSE": 84.181,
-        "Directional_Accuracy": 0.600,
-        "Turning_Point_Accuracy": 0.562,
-        "Weighted_Score": 28.339
+        "mape": 12.34,
+        "rmse": 56.78,
+        // ... additional metrics
     },
     "lightgbm": {
-        "RMSE": 85.063,
-        "Directional_Accuracy": 0.508,
-        "Turning_Point_Accuracy": 0.607,
-        "Weighted_Score": 28.649
+        "mape": 23.45,
+        "rmse": 67.89,
+        // ... additional metrics
     },
     "xgboost": {
-        "RMSE": 80.738,
-        "Directional_Accuracy": 0.559,
-        "Turning_Point_Accuracy": 0.576,
-        "Weighted_Score": 27.200
+        // ... metrics
     },
     "catboost": {
-        "RMSE": 74.421,
-        "Directional_Accuracy": 0.635,
-        "Turning_Point_Accuracy": 0.611,
-        "Weighted_Score": 25.057
+        // ... metrics
     }
 }
 ```
 
-The ML metrics include for each model:
-- RMSE (Root Mean Square Error)
-- Directional Accuracy (0-1, higher is better)
-- Turning Point Accuracy (0-1, higher is better)
-- Weighted Score (composite metric)
+## Important Notes
 
-## API Documentation
+1. **Response Times**: 
+   - The health check endpoint responds quickly (~1 second)
+   - Other endpoints involve complex computations and may take several minutes to respond
+   - For h=24, expect longer response times than h=12
 
-For interactive API documentation, visit:
-- Swagger UI: `http://localhost:8000/docs`
-- ReDoc: `http://localhost:8000/redoc`
+2. **Error Handling**:
+   - All endpoints return HTTP 200 for successful responses
+   - Error responses include appropriate HTTP status codes and error messages
+
+3. **Rate Limiting**:
+   - Please implement appropriate rate limiting in your applications
+   - Consider caching responses for frequently requested forecasts
+
+4. **Models**:
+   - Statistical models: AutoARIMA, AutoETS, AutoTheta, CES
+   - ML models: ElasticNet, LightGBM, XGBoost, CatBoost
+
+## Example Usage (Python)
+
+```python
+import requests
+import json
+
+BASE_URL = "https://hajiwansau15--agri-price-forecast-api-fastapi-app.modal.run"
+
+# Get forecast for next 24 months
+response = requests.get(f"{BASE_URL}/forecast", params={"h": 24})
+forecasts = response.json()
+
+# Get ML metrics
+response = requests.get(f"{BASE_URL}/ml_metrics", params={"h": 12})
+ml_metrics = response.json()
+```
+
+## Support
+For any issues or questions, please open an issue in the repository.
