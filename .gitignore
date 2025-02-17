@@ -5,3 +5,5 @@ macro_data.xlsx
 .env
 *.txt
 *.log
+**/**/__pycache__/
+*.pyc
